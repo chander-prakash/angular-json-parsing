@@ -1,2 +1,5 @@
-# angular-hangman
-This is a dummy angular hangman game example
+# angular-angular-json-parsing
+This is an example for Angular Json Parsing
+
+
+
