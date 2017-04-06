@@ -1,0 +1,161 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/angular/loadingbar.css">
+
+    <style>
+
+        body{
+            background: #ccc;
+        }
+        #loading-bar .bar {
+            background: #DE4624;
+
+        }
+    </style>
+
+    <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.7.1/loading-bar.min.js"></script>
+
+</head>
+
+<body  ng-app="App" ng-controller="bodyController" class="text-center" >
+
+
+    <progress value="{{chances_left}}" max="{{chances}}" min=0  style="width:400px"></progress>
+    <p>Total Chances Left  : {{chances_left}}</p>
+    <p >Corret Word Entered   : 
+        <span ng-show='correctwords.length'>{{correctwords}}</span>
+        <span ng-hide='correctwords.length'>No Word Entered</span>
+    </p>
+    <p>InCorret Word Entered   : 
+        <span ng-show='inCorrectwords.length'>{{inCorrectwords}}</span>
+        <span ng-hide='inCorrectwords.length'>No Word Entered</span>
+    </p>
+    <p>Word To Match : {{wordToShow}}</p>
+
+    <div class="form-group">
+        <input type="text" name="" value="" placeholder=""  ng-model="input.letter">
+        <button type="button" ng-click="validate()">Submit</button>
+    </div>
+    <script>
+        var app = angular.module('App', ['angular-loading-bar' , 'ngAnimate']);
+
+
+        app.controller('bodyController', ['$scope', 'cfpLoadingBar' , '$interval', function ($scope, cfpLoadingBar , $interval) {
+
+
+
+            /*-----Definations-----*/
+            $scope.words = ["chander", "kundan", "shikha", "komal", "poet","blacklist","casket","devoid","piece","subsonic","filthy","helmet","melt", "progress"];
+            $scope.chances_left = 6;
+            $scope.chances = 6;
+            $scope.wordToShow = $scope.displayWord = '';
+            $scope.input = {
+                letter : ''
+            };
+            $scope.correctwords = [];
+            $scope.inCorrectwords = [];
+                //new Game Code
+                $scope.newGame = function(){
+
+                    $scope.correctwords = [];
+                    $scope.inCorrectwords = [];
+                    $scope.input.letter = '';
+                    $scope.wordToShow = $scope.displayWord = '';
+                    $scope.chances_left = 6;
+                    $scope.chances = 6;
+
+                    $scope.displayWord = $scope.words[Math.floor(Math.random() * $scope.words.length)];
+                    console.log("Word To Guess : " + $scope.displayWord);
+                    for(var i=0; i<$scope.displayWord.length; i++){
+                        $scope.wordToShow += "*";
+                    }
+                }
+                
+
+                /*-----Checking Words-----*/
+                $scope.validate = function(){
+
+
+                    $scope.wordToShow = '';
+                    if($scope.displayWord.indexOf($scope.input.letter) == -1){
+                                // not a correct letter
+                                //console.log("InCorrent "+$.inArray($scope.input.letter, $scope.inCorrectwords));
+                                if($.inArray($scope.input.letter, $scope.inCorrectwords) == -1){
+                                    $scope.inCorrectwords.push($scope.input.letter);
+                                    $scope.chances_left -=1;
+                                }
+                            }
+                            else{
+                            //character match in word
+                            if($.inArray($scope.input.letter, $scope.correctwords) == -1){
+                                // not present in array
+                                $scope.correctwords.push($scope.input.letter);
+                            }
+                        }
+                        for(var i=0; i< $scope.displayWord.length; i++){
+                            if($.inArray($scope.displayWord[i], $scope.correctwords) == -1){
+                                $scope.wordToShow += "*";
+                            }
+                            else{
+                                $scope.wordToShow +=$scope.displayWord[i];
+                            }
+
+                        }
+                        $scope.input.letter = '';
+
+
+                        if($scope.chances_left == 0){
+                            alert("You loose !");
+
+                            setTimeout(function(){
+                                $scope.newGame();
+                            }, 500);
+                            
+                        }
+
+
+                        if($scope.wordToShow.indexOf("*") == -1){
+                            alert("You Won !");
+                            setTimeout(function(){
+                                $scope.newGame();
+                            }, 500);
+                        }
+                    }
+
+
+
+                //starting new game on page load
+                $scope.newGame();
+
+
+
+            }]);
+
+
+
+
+
+        /*
+        $(window).load(function(){
+                cfpLoadingBar.start();
+            });
+            $(document).ready(function(){
+                cfpLoadingBar.complete();
+            });
+            */
+        </script>
+
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.4.min.js"><\/script>')</script>
+    </body>
+    </html>
